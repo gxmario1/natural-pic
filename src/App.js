@@ -1,23 +1,43 @@
-import logo from './logo.svg';
-import './App.css';
+import React, {useState, useEffect} from 'react'
+import {BrowserRouter, Routes, Route} from 'react-router-dom'
+import Context from './Context'
+import Navbar from './components/Navbar'
+import Home from './pages/Home'
+import Favs from './pages/Favoritos'
+import './App.css'
+
 
 function App() {
+  const [images, setImages] = useState([])
+  const defaultEndpoint = '/fotos.json'
+
+  const galleryImages = async() => {
+    const response = await fetch(defaultEndpoint);
+    const data = await response.json();
+    let filteredData = data.photos.map((e) => ({
+      id: e.id,
+      src: e.src.medium,
+      desc: e.alt,
+      favourite: false
+    }));
+    setImages(filteredData);
+  }
+
+  useEffect(() => {
+    galleryImages()
+  }, [])
+  
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className='App'>
+      <Context.Provider value={{images, setImages}}>
+        <BrowserRouter>
+          <Navbar />
+          <Routes>
+            <Route path='/' element={<Home />} />
+            <Route path='/favs' element={<Favs />} />
+          </Routes>
+        </BrowserRouter>
+      </Context.Provider>
     </div>
   );
 }
