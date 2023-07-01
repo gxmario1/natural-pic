@@ -3,7 +3,7 @@ import Context from '../Context'
 
 function Favs() {
     const {images,setImages} = useContext(Context)
-    const deleteFav = (id) => {
+    const deleteFav = (id) => { 
         const imgIndex = images.findIndex((e) => e.id === id)
         images[imgIndex].favourite = !images[imgIndex].favourite
         setImages([...images])
